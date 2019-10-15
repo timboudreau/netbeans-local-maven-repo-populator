@@ -1,0 +1,13 @@
+#!/bin/bash
+
+DIR=`pwd`
+
+cd ${1-../incubator-netbeans}
+
+ant -Dcluster.config=full build-nozip build-nbms build-source-zips build-javadoc
+
+echo `pwd`
+
+cd $DIR
+
+mvn -Dnbversion=$2 install

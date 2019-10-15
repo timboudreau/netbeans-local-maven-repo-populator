@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns:if="ant:if"
+         xmlns:unless="ant:un">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.mastfrog</groupId>
+    <version>2.1</version>
+    <artifactId>nb-repo-build</artifactId>
+    <name>NB Repo Build</name>
+    <packaging>pom</packaging>
+    <modules>
+    </modules>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <nbsrc>/home/tim/work/netbeans/incubator-netbeans</nbsrc>
+        <nbversion>RELEASE120-dev</nbversion>
+    </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>build-netbeans</id>
+                        <phase>prepare-sources</phase>
+                        <configuration>
+                            <target name="build-netbeans">
+                                <echo>Building nbms, source zips and javadoc if necessary</echo>
+                                
+                                <available file="${nbsrc}/nbbuild/netbeans/bin/netbeans" property="netbeans-built"/>
+                                <ant dir="${nbsrc}" target="build-nozip" unless:true="${netbeans-built}">
+                                    <property name="cluster.config">full</property>
+                                </ant>
+                                
+                                <available file="${nbsrc}/nbbuild/nbms/platform/org-netbeans-core.zip" property="nbms-built"/>
+                                <ant dir="${nbsrc}" target="build-nbms" unless:true="nbms-built">
+                                    <property name="cluster.config">full</property>
+                                </ant>
+                                
+                                <available file="${nbsrc}/nbbuild/build/source-zips/org-netbeans-core.zip" property="source-zips-built"/>
+                                <ant dir="${nbsrc}" target="build-source-zips" unless:true="source-zips-built">
+                                    <property name="cluster.config">full</property>
+                                </ant>
+                                
+                                <available file="${nbsrc}/nbbuild/build/javadoc/org-openide-filesystems.zip" property="javadoc-built"/>
+                                <ant dir="${nbsrc}" target="build-javadoc" unless:true="javadoc-built">
+                                    <property name="cluster.config">full</property>
+                                </ant>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>clean-netbeans</id>
+                        <phase>clean</phase>
+                        <configuration>
+                            <target name="clean-netbeans">
+                                <ant dir="${nbsrc}" target="clean"/>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>nb-repository-plugin</artifactId>
+                <version>1.4-SNAPSHOT</version>
+                <configuration>
+                    <netbeansInstallDirectory>${nbsrc}/nbbuild/netbeans</netbeansInstallDirectory>
+                    <netbeansNbmDirectory>${nbsrc}/nbbuild/nbms</netbeansNbmDirectory> 
+                    <netbeansSourcesDirectory>${nbsrc}/nbbuild/build/source-zips</netbeansSourcesDirectory>
+                    <netbeansJavadocDirectory>${nbsrc}/nbbuild/build/javadoc</netbeansJavadocDirectory>
+                    <forcedVersion>${nbversion}</forcedVersion>
+                </configuration>
+                <executions>
+                    <!--
+                    <execution>
+                        <id>download</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>download</goal>
+                        </goals>
+                    </execution>
+                                        -->
+                    <execution>
+                        <id>pop</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>populate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
