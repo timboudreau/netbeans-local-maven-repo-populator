@@ -71,9 +71,9 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>nb-repository-plugin</artifactId>
-                <version>1.4-SNAPSHOT</version>
+                <groupId>org.apache.netbeans.utilities</groupId>
+                    <artifactId>nb-repository-plugin</artifactId>
+                    <version>1.4</version>
                 <configuration>
                     <netbeansInstallDirectory>${nbsrc}/nbbuild/netbeans</netbeansInstallDirectory>
                     <netbeansNbmDirectory>${nbsrc}/nbbuild/nbms</netbeansNbmDirectory> 
